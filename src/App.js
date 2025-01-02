@@ -1,8 +1,8 @@
 import react from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
-import UpdateData from "./components/UpdateData";
 import AddData from "./components/AddData";
+import ManageData from "./components/ManageData";
 
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/add" element={<AddData />} />
-      <Route path="/manage" element={<UpdateData />} />
+      <Route path="/manage" element={<ManageData />} />
     </Routes>
      
     </BrowserRouter>
