@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Edit2, Trash2, AlertTriangle, Loader2, X, ArrowLeft} from "lucide-react";
+import {
+  Edit2,
+  Trash2,
+  AlertTriangle,
+  Loader2,
+  X,
+  ArrowLeft,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactQuill from "react-quill";
 import axios from "axios";
@@ -58,7 +65,14 @@ const ManageData = () => {
     example_work: "",
     example_fail: "",
     strategy: "",
-    practices: "",
+    practices: [
+      {
+        question: "",
+        options: [""],
+        correctAnswer: "",
+        explanation: "",
+      },
+    ],
   };
 
   const [editFormData, setEditFormData] = useState(initialFormData);
@@ -160,7 +174,17 @@ const ManageData = () => {
       example_work: item.example_work || "",
       example_fail: item.example_fail || "",
       strategy: item.strategy || "",
-      practices: item.practices || "",
+      practices:
+        item.practices && item.practices.length > 0
+          ? item.practices
+          : [
+              {
+                question: "",
+                options: [""],
+                correctAnswer: "",
+                explanation: "",
+              },
+            ],
     });
     setIsEditModalOpen(true);
   };
@@ -221,6 +245,42 @@ const ManageData = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Add these new functions for handling practices
+  const handlePracticeChange = (index, field, value) => {
+    const updatedPractices = [...editFormData.practices];
+    if (field === "options") {
+      updatedPractices[index][field] = value.split(","); // Handle options as comma-separated values
+    } else {
+      updatedPractices[index][field] = value;
+    }
+    setEditFormData((prev) => ({
+      ...prev,
+      practices: updatedPractices,
+    }));
+  };
+
+  const addPractice = () => {
+    setEditFormData((prev) => ({
+      ...prev,
+      practices: [
+        ...prev.practices,
+        {
+          question: "",
+          options: [""],
+          correctAnswer: "",
+          explanation: "",
+        },
+      ],
+    }));
+  };
+
+  const removePractice = (index) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      practices: prev.practices.filter((_, i) => i !== index),
+    }));
   };
 
   const handleInputChange = (e) => {
@@ -401,27 +461,108 @@ const ManageData = () => {
               </div>
 
               {/* Rich Text Editor Fields */}
-              {textEditorFields.map((field) => (
-                <div key={field.name}>
-                  <label className="block text-sm font-medium mb-1">
-                    {field.label}
+              {textEditorFields.map(
+                (field) =>
+                  field.name !== "practices" && (
+                    <div key={field.name}>
+                      <label className="block text-sm font-medium mb-1">
+                        {field.label}
+                      </label>
+                      <div className="border rounded-lg">
+                        <ReactQuill
+                          theme="snow"
+                          value={editFormData[field.name]}
+                          onChange={(content) =>
+                            handleEditorChange(content, field.name)
+                          }
+                          modules={modules}
+                          formats={formats}
+                          className="h-64 mb-12"
+                        />
+                      </div>
+                    </div>
+                  )
+              )}
+
+              {/* Practices Section */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold">Practices</h2>
+                </div>
+              </div>
+              {editFormData.practices.map((practice, index) => (
+                <div key={index} className="p-4 rounded-lg border bg-gray-50">
+                  <label className="block text-sm font-medium mb-2">
+                    Question
                   </label>
-                  <div className="border rounded-lg">
-                    <ReactQuill
-                      theme="snow"
-                      value={editFormData[field.name]}
-                      onChange={(content) =>
-                        handleEditorChange(content, field.name)
-                      }
-                      modules={modules}
-                      formats={formats}
-                      className="h-64 mb-12"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={practice.question}
+                    onChange={(e) =>
+                      handlePracticeChange(index, "question", e.target.value)
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                  />
+
+                  <label className="block text-sm font-medium mb-2">
+                    Options (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={practice.options.join(",")}
+                    onChange={(e) =>
+                      handlePracticeChange(index, "options", e.target.value)
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                  />
+
+                  <label className="block text-sm font-medium mb-2">
+                    Correct Answer
+                  </label>
+                  <input
+                    type="text"
+                    value={practice.correctAnswer}
+                    onChange={(e) =>
+                      handlePracticeChange(
+                        index,
+                        "correctAnswer",
+                        e.target.value
+                      )
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                  />
+
+                  <label className="block text-sm font-medium mb-2">
+                    Explanation
+                  </label>
+                  <textarea
+                    value={practice.explanation}
+                    onChange={(e) =>
+                      handlePracticeChange(index, "explanation", e.target.value)
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                    rows={3}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removePractice(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove Question
+                  </button>
                 </div>
               ))}
             </div>
-
+            <div className="flex py-4 items-center justify-start">
+              <button
+                type="button"
+                onClick={addPractice}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Add Question
+              </button>
+            </div>
             <div className="mt-6 flex justify-end gap-3 sticky bottom-0 bg-white py-4">
               <button
                 onClick={() => setIsEditModalOpen(false)}

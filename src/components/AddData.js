@@ -33,7 +33,14 @@ const AddData = () => {
     example_work: "",
     example_fail: "",
     strategy: "",
-    practices: "",
+    practices: [
+      {
+        question: "",
+        options: [""],
+        correctAnswer: "",
+        explanation: "",
+      },
+    ],
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -151,7 +158,6 @@ const AddData = () => {
     { name: "example_work", label: "Example Work" },
     { name: "example_fail", label: "Example Fail" },
     { name: "strategy", label: "Strategy" },
-    { name: "practices", label: "Practices" },
   ];
 
   const getButtonContent = () => {
@@ -177,6 +183,37 @@ const AddData = () => {
         Save
       </>
     );
+  };
+
+  const handlePracticeChange = (index, field, value) => {
+    const updatedPractices = [...formData.practices];
+    if (field === "options") {
+      updatedPractices[index][field] = value.split(","); // Handle options as comma-separated values
+    } else {
+      updatedPractices[index][field] = value;
+    }
+    setFormData((prev) => ({
+      ...prev,
+      practices: updatedPractices,
+    }));
+  };
+
+  const addPractice = () => {
+    setFormData((prev) => ({
+      ...prev,
+      practices: [
+        ...prev.practices,
+        { question: "", options: [""], correctAnswer: "", explanation: "" },
+      ],
+    }));
+  };
+
+  const removePractice = (index) => {
+    const updatedPractices = formData.practices.filter((_, i) => i !== index);
+    setFormData((prev) => ({
+      ...prev,
+      practices: updatedPractices,
+    }));
   };
 
   return (
@@ -283,6 +320,82 @@ const AddData = () => {
                   </div>
                 </motion.div>
               ))}
+            </div>
+            <div className="space-y-6">
+              <h2 className="text-lg font-bold text-white">Practices</h2>
+              {formData.practices.map((practice, index) => (
+                <div
+                  key={index}
+                  className="p-4 rounded-lg border bg-white/50 backdrop-blur-sm"
+                >
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Question
+                  </label>
+                  <input
+                    type="text"
+                    value={practice.question}
+                    onChange={(e) =>
+                      handlePracticeChange(index, "question", e.target.value)
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                  />
+
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Options (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={practice.options.join(",")}
+                    onChange={(e) =>
+                      handlePracticeChange(index, "options", e.target.value)
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                  />
+
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Correct Answer
+                  </label>
+                  <input
+                    type="text"
+                    value={practice.correctAnswer}
+                    onChange={(e) =>
+                      handlePracticeChange(
+                        index,
+                        "correctAnswer",
+                        e.target.value
+                      )
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                  />
+
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Explanation
+                  </label>
+                  <textarea
+                    value={practice.explanation}
+                    onChange={(e) =>
+                      handlePracticeChange(index, "explanation", e.target.value)
+                    }
+                    className="w-full px-4 py-2 mb-4 rounded-lg border"
+                  ></textarea>
+
+                  <button
+                    type="button"
+                    onClick={() => removePractice(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove Question
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={addPractice}
+                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                Add Question
+              </button>
             </div>
 
             <motion.div
