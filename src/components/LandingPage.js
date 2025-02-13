@@ -13,20 +13,20 @@ const LandingPage = () => {
           TradeXpert Learning is your gateway to mastering the tools, strategies, and skills essential for effective administration in today's fast-paced trading environment.
         </p>
 
-        <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch w-full max-w-md mx-auto px-4">
+        <div className="flex flex-col gap-6 justify-center items-stretch w-full max-w-md mx-auto px-4 md:flex-row">
           <a 
             href="/add"
-            className="flex items-center justify-center gap-2 bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-gray-100 w-full no-underline touch-manipulation"
+            className="flex items-center justify-center gap-3 bg-white text-purple-600 px-6 py-6 md:py-3 rounded-xl md:rounded-lg font-semibold shadow-lg hover:bg-gray-100 w-full no-underline touch-manipulation text-lg md:text-base"
           >
-            <Database className="w-5 h-5" />
+            <Database className="w-6 h-6 md:w-5 md:h-5" />
             Add Data
           </a>
 
           <a 
             href="/manage"
-            className="flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/20 w-full no-underline touch-manipulation"
+            className="flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 py-6 md:py-3 rounded-xl md:rounded-lg font-semibold hover:bg-white/20 w-full no-underline touch-manipulation text-lg md:text-base"
           >
-            <RefreshCw className="w-5 h-5" />
+            <RefreshCw className="w-6 h-6 md:w-5 md:h-5" />
             Manage Data
           </a>
         </div>
